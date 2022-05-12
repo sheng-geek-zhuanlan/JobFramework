@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter" 
+		elementFormDefault="qualified">
+ 
+	<xsd:annotation>
+      	<xsd:documentation>
+      		  This schema file is to define the general Test Job XML Element or Type.     		
+      	</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:group name="TestJobGeneralElements">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="PropFile" type="PropFileType" minOccurs="0" maxOccurs="unbounded"/>
+        	<xsd:element name="ConfFile" type="ConfigFileType" minOccurs="0" maxOccurs="unbounded"/> 
+        	<xsd:element name="SelConfFile" type="SelConfFileType" minOccurs="0" maxOccurs="unbounded"/>     		 
+     		<xsd:element name="Property" type="PropertyType" minOccurs="0" maxOccurs="unbounded"/>  
+     		<xsd:element name="PreKillProcess" type="PreKillProcessType" minOccurs="0" maxOccurs="unbounded"/> 
+     		<xsd:element name="JobInput" type="JobInputType" minOccurs="0" maxOccurs="unbounded"/>  
+     		<xsd:element name="JobOutput" type="JobOutputType" minOccurs="0" maxOccurs="unbounded"/>   
+     		<xsd:element name="TestData" type="TestDataType" minOccurs="0" maxOccurs="unbounded"/> 
+     		</xsd:choice>
+     		</xsd:sequence>   	 
+    </xsd:group>	
+    
+    <xsd:complexType name="ConfigFileType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="location" type="xsd:string" use="required"/>	
+	</xsd:complexType>
+	<xsd:complexType name="PropFileType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="location" type="xsd:string" use="required"/>	
+	</xsd:complexType>
+	
+	<xsd:complexType name="PropertyType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>	
+	</xsd:complexType>
+	
+	<xsd:complexType name="SelConfFileType">
+			<xsd:attribute name="name" type="xsd:string" use="required"/>	
+			<xsd:attribute name="location" type="xsd:string" use="required"/>	
+		</xsd:complexType>
+	<xsd:complexType name="PreKillProcessType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="JobInputType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="optional"/>	    
+	</xsd:complexType>
+	
+	<xsd:complexType name="JobOutputType">
+    	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="optional"/>	
+		<xsd:attribute name="sql" type="xsd:string" use="optional"/>    
+	</xsd:complexType>
+		
+	<xsd:complexType name="TestDataType">
+		<xsd:attribute name="type" type="TestDataExtensionType" use="required"/>
+		<xsd:attribute name="location" type="xsd:string" use="required"/>
+	</xsd:complexType>
+		
+	<xsd:complexType name="ClassPathType">
+    	<xsd:attribute name="location" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RunType">
+		<xsd:all>
+			<xsd:element name="Arg" type="RunArgType" minOccurs="0" maxOccurs="1"/>	
+		</xsd:all>
+    	<xsd:attribute name="path" type="xsd:string" use="required"/>    
+	</xsd:complexType>
+		
+	<xsd:complexType name="RunArgType">
+		<xsd:attribute name="line" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+
+  	
+  	<xsd:complexType name="IntegerSimpleContent">
+    	<xsd:simpleContent>
+      		<xsd:extension base="xsd:nonNegativeInteger"/>
+   		</xsd:simpleContent>
+  	</xsd:complexType>	
+  		
+	<xsd:simpleType name="PortStringType">
+  			<xsd:restriction base="xsd:string">
+    			<xsd:pattern value="[0-9]{4}"/>
+  			</xsd:restriction>    		 		
+  	</xsd:simpleType>
+  	
+  	<xsd:simpleType name="EmailType">
+  			<xsd:restriction base="xsd:string">
+    			<xsd:pattern value="((\w+([-_.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*),?)+"/>
+  			</xsd:restriction>    		 		
+  	</xsd:simpleType>
+  	
+  	<xsd:simpleType name="TestDataExtensionType">
+  		<xsd:annotation>
+      		<xsd:documentation>
+      		  The extension or specified type of test data file.     		
+      		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:restriction base = "xsd:string">
+      		<xsd:enumeration value = "xml"/>	
+      		<xsd:enumeration value = "xls"/>  	
+      		<xsd:enumeration value = "xlsx"/>			
+      		<xsd:enumeration value = "txt"/>	
+      		<xsd:enumeration value = "XML"/>	
+      		<xsd:enumeration value = "XLS"/>  	
+      		<xsd:enumeration value = "XLSX"/>			
+      		<xsd:enumeration value = "TXT"/>
+      		<xsd:enumeration value = "Iteration"/>
+      		<xsd:enumeration value = "iteration"/>  <!-- A specified test data type for Iterational test -->
+    	</xsd:restriction>       			 		
+  	</xsd:simpleType>
+  	
+  		
+  		
+  <xsd:attributeGroup name="TestJobGeneralAttributes">
+   		<xsd:attribute name="name" type="xsd:string" use="required"/>
+    	<xsd:attribute name="description" type="xsd:string" use="required"/>
+    	<xsd:attribute name="depends" type="xsd:string" use="optional"/> 
+    	<xsd:attribute name="host" type="xsd:string" use="optional"/> 
+    	<xsd:attribute name="timeout" type="xsd:nonNegativeInteger" use="optional"/> 
+  </xsd:attributeGroup>
+  
+</xsd:schema>

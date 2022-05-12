@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter" 
+		elementFormDefault="qualified">
+	
+	 	<xsd:include schemaLocation="JobSchema.xsd"/>
+		
+	 	<xsd:element name="Selenium" type="SeleniumTestJobType"/>
+		 
+		<xsd:complexType name="SeleniumTestJobType">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:group ref="TestJobGeneralElements"/>
+      			<xsd:element name="ClassPath" type="ClassPathType" minOccurs="0" maxOccurs="unbounded"/>
+      			<xsd:element name="SelTestCase" type="SelTestCaseType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>
+    		<xsd:attribute name="driver_type" type="xsd:string" use="optional"/>
+    		<xsd:attribute name="iteration" type="xsd:string" use="optional"/>
+    			
+		</xsd:complexType>
+
+	
+	<xsd:complexType name="SelTestCaseType">
+				<xsd:sequence>
+					<xsd:element name="SelTest" type="SelTestType" minOccurs="1" maxOccurs="unbounded"/>	
+				</xsd:sequence>
+			<xsd:attribute name="path" type="xsd:string" use="required"/>
+			<xsd:attribute name="name" type="xsd:string" use="optional"/>
+    		<xsd:attribute name="description" type="xsd:string" use="optional"/>
+    		<xsd:attribute name="depends" type="xsd:string" use="optional"/> 
+	</xsd:complexType>
+		
+		<xsd:complexType name="SelTestType">
+			<xsd:attribute name="name" type="xsd:string" use="required"/>	
+			<xsd:attribute name="description" type="xsd:string" use="optional"/>		
+		</xsd:complexType>	
+			
+</xsd:schema>

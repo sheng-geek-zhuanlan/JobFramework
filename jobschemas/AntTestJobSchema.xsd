@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter" 
+		elementFormDefault="qualified">
+ 
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		<xsd:element name="Ant" type="AntTestJobType"/>
+		
+		<xsd:complexType name="AntTestJobType">
+			<xsd:sequence>
+				<xsd:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>		
+			</xsd:sequence>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+    		<xsd:attribute name="driver_type" type="xsd:string" use="optional"/>
+    		<xsd:attribute name="daemon" type="xsd:boolean" use="optional"/>    	
+		</xsd:complexType>
+		
+		<!--
+		<xsd:complexType name="AntTestJobType">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:group ref="TestJobGeneralElements"/>
+      			<xsd:element name="Java" type="AntJavaType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+    		<xsd:attribute name="driver_type" type="xsd:string" use="required"/>
+    		<xsd:attribute name="daemon" type="xsd:boolean" use="required"/>    	
+		</xsd:complexType>
+		-->
+		
+		<xsd:complexType name="AntJavaType">
+			<xsd:sequence>
+				<xsd:element name="Arg" type="RunArgType" minOccurs="1" maxOccurs="unbounded"/>	
+			</xsd:sequence>		
+			<xsd:attribute name="fork" type="xsd:boolean" use="required"/>
+    		<xsd:attribute name="spawn" type="xsd:boolean" use="required"/>
+    		<xsd:attribute name="jar" type="xsd:string" use="required"/>
+		</xsd:complexType>
+		
+		
+</xsd:schema>

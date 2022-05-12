@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter"  
+		elementFormDefault="qualified">
+	 
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		
+		<xsd:element name="JDBC" type="JDBCTestJobType"/>
+		
+		<xsd:complexType name="JDBCTestJobType">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+      			<xsd:group ref="TestJobGeneralElements"/>
+      			<xsd:element name="DBConfig" type="DBConfigType" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DataLoad" type="DataLoadType" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DataFetch" type="DataFetchType" minOccurs="1" maxOccurs="1"/>   			
+    		</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+		</xsd:complexType>
+
+		
+		<xsd:complexType name="DBConfigType">
+			<xsd:sequence>
+      			<xsd:element name="DB_HOST" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DB_PORT" type="PortStringType" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DB_SID" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DB_USER" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DB_PWD" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DB_TYPE" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    		</xsd:sequence>
+					
+		</xsd:complexType>
+		
+		<xsd:complexType name="DataLoadType">
+			<xsd:sequence>
+      			<xsd:element name="SQLFile" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="SQLLine" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    		</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:complexType name="DataFetchType">
+			<xsd:sequence>
+      			<xsd:element name="FetchDataSQL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="Output" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="DataType" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="ExpectedValue" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      			<xsd:element name="PassWhen" type="PassWhenCondition" minOccurs="1" maxOccurs="1"/>
+    		</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:simpleType name="PassWhenCondition">
+		<xsd:annotation>
+      		<xsd:documentation>
+      		  Paaaassed when the fetched value {condition} the expected value.     		
+      		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:restriction base = "xsd:string">
+      		<xsd:enumeration value = "Equal"/>	<!--Equals-->
+      		<xsd:enumeration value = "GT"/>  	<!--Greater Than-->
+      		<xsd:enumeration value = "LT"/>		<!--Lower Than-->
+      		<xsd:enumeration value = "NGT"/>  	<!--Not Greater Than--> 
+      		<xsd:enumeration value = "NLT"/>	<!--Not Lower Than-->
+      		<xsd:enumeration value = "NE"/>    	<!--Not Equals--> 	
+    	</xsd:restriction>
+		</xsd:simpleType>
+
+		
+</xsd:schema>

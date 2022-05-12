@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter"  
+		elementFormDefault="qualified">
+				
+		<xsd:element name="DataPool">
+			<xsd:complexType>
+				<xsd:sequence>
+					<xsd:element name="Data" type="DataElementType" minOccurs="1" maxOccurs="unbounded"/>		
+				</xsd:sequence>	
+				<xsd:attribute name="indicator" type="xsd:string" use="required"/>	
+			</xsd:complexType>	
+		</xsd:element>
+				
+		<xsd:complexType name="DataElementType">
+			<xsd:sequence>
+				<xsd:element name="Description" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Content" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element name="Location" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="value" type="xsd:string" use="required"/>			
+					</xsd:complexType>			
+				</xsd:element>						
+			</xsd:sequence>
+			<xsd:attributeGroup ref="DataAttributesGroup"/>						
+		</xsd:complexType>
+			
+		<xsd:attributeGroup name="DataAttributesGroup">
+			<xsd:attribute name="indicator" type="xsd:string" use="required"/>
+			<xsd:attribute name="type" type="DataTypeOptions" use="optional"/>
+			<xsd:attribute name="lan" type="LanguageList" use="optional"/>
+			<xsd:attribute name="charset_in" type="xsd:string" use="optional"/>
+			<xsd:attribute name="charset_out" type="xsd:string" use="optional"/>
+			<xsd:attribute name="splitter" type="xsd:string" use="optional" default=";"/>	
+		</xsd:attributeGroup>
+	
+
+  	
+    <xsd:simpleType name="LanguageList">
+  		<xsd:annotation>
+      		<xsd:documentation>
+      		  The list of the languages, that is the 10 languages' abbreviation or N/A.     		
+      		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:restriction base = "xsd:string">
+    	  	<xsd:pattern value="EN|DE|ES|FR|IT|JA|KO|PT_BR|ZH_CN|ZH_TW|N/A"/>
+		</xsd:restriction>   		 		
+  	</xsd:simpleType>
+  	
+    <xsd:simpleType name="DataTypeOptions">
+  		<xsd:annotation>
+      		<xsd:documentation>
+      		The list of the Test Data Type, options can be Plain/Binary/CodePoint/Bytes/File; The CodePoint data type 
+      		indicate that the test data is comprised as Unicode Code Points which use ";" as splitter; 
+      		For the "File" data type, the location element according to the file should be provided.   		
+      		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:restriction base = "xsd:string">
+    	  	<xsd:pattern value="Plain|Binary|CodePoint|Bytes|File"/>
+		</xsd:restriction>   		 		
+  	</xsd:simpleType>
+  	
+</xsd:schema> 

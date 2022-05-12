@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter" 
+		elementFormDefault="qualified"> 
+	
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+				
+		<xsd:element name="AC">
+			<xsd:complexType>
+				<xsd:sequence>
+					<xsd:element ref="BuildReport"/>	
+					<xsd:element ref="UploadReport"/>
+					<xsd:element ref="MailReport"/>		
+				</xsd:sequence>	
+				<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+			</xsd:complexType>	
+		</xsd:element>
+
+  			<xsd:element name="BuildReport">
+					<xsd:complexType>
+						<xsd:attribute name="path" type="xsd:string" use="required"/>	
+					</xsd:complexType>						 	
+			</xsd:element>	
+		
+		<xsd:element name="UploadReport">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="FtpServer" type="xsd:string" minOccurs="1" maxOccurs="1"/>	
+						<xsd:element name="FtpUser" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="FtpPasswd" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="FtpDir" type="xsd:string" minOccurs="1" maxOccurs="1"/>			
+					</xsd:sequence>		
+					<xsd:attribute name="ToDo" type="Yes_Or_No" use="required"/>	
+				</xsd:complexType>
+		</xsd:element>
+		<xsd:element name="MailReport">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="MailConfig" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="location" type="xsd:string" use="required"/>						
+							</xsd:complexType>					
+						</xsd:element>	
+						<xsd:element name="MailTemplate" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="location" type="xsd:string" use="required"/>						
+							</xsd:complexType>					
+						</xsd:element>	
+						<xsd:element name="To" type="EmailType" minOccurs="1" maxOccurs="unbounded"/>
+						<xsd:element name="Cc" type="EmailType" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element name="Subject" type="xsd:string"/>			
+					</xsd:sequence>		
+					<xsd:attribute name="ToDo" type="Yes_Or_No" use="required"/>	
+				</xsd:complexType>
+		</xsd:element>
+		
+		<xsd:simpleType name="Yes_Or_No">
+    	<xsd:annotation>
+      		<xsd:documentation>
+      		 	ToDo attribute value, an enumeration type of "Yes" and "No"     		
+      		</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:restriction base = "xsd:string">
+      		<xsd:enumeration value = "Yes"/>
+      		<xsd:enumeration value = "No"/>    	
+    	</xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter"  
+		elementFormDefault="qualified">
+ 		
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		<xsd:element name="QTP">
+			<xsd:complexType>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:group ref="TestJobGeneralElements"/>
+					<xsd:element name="Lib" type="LibType" minOccurs="0" maxOccurs="unbounded"/>
+					<!-- One, and only one, child of the "Choice" must be appeared -->
+					<xsd:choice id="Script-or-Factory-Mode" minOccurs="0" maxOccurs="1">
+						<xsd:group  ref="QTPTestJobScriptModeType"/>
+						<xsd:group  ref="QTPTestJobFactoryModeType"/>			
+					</xsd:choice>
+				</xsd:choice>
+				<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+    			<xsd:attribute name="factoryMode" type="xsd:string" use="optional" default="false"/>
+    			<xsd:attribute name="iteration" type="xsd:string" use="optional" default=""/>
+				</xsd:complexType>
+		</xsd:element>	
+		
+		<xsd:group name="QTPTestJobScriptModeType">	
+		<xsd:annotation>
+      		<xsd:documentation>
+      		  QTP Test Job Script Mode Type.     		
+      		</xsd:documentation>
+    	</xsd:annotation>	
+			<xsd:sequence>     			
+      			<xsd:element name="Run" type="RunType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:sequence>		
+		</xsd:group>
+		
+		<xsd:group name="QTPTestJobFactoryModeType">
+		<xsd:annotation>
+      		<xsd:documentation>
+      		  QTP Test Job Factory Mode Type.     		
+      		</xsd:documentation>
+    	</xsd:annotation>			
+			<xsd:sequence>
+      			<xsd:element name="Case" type="QTPCaseType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:sequence>
+		</xsd:group>
+				
+		<xsd:complexType name="LibType">
+			<xsd:attribute name="location" type="xsd:string" use="required"/>
+		</xsd:complexType>
+				
+		<xsd:complexType name="QTPCaseType">
+				<xsd:sequence>
+					<xsd:element name="Test" type="QTPTestType" minOccurs="1" maxOccurs="unbounded"/>	
+				</xsd:sequence>
+			<xsd:attributeGroup ref="TestJobGeneralAttributes"/>
+		</xsd:complexType>
+		
+		<xsd:complexType name="QTPTestType">
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+    		<xsd:attribute name="description" type="xsd:string" use="required"/>				
+		</xsd:complexType>	
+		
+</xsd:schema>

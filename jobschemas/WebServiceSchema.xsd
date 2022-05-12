@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter"  
+		elementFormDefault="qualified">
+	
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		
+		<xsd:element name="WebService" type="WebServiceType"/>
+		 
+		<xsd:complexType name="WebServiceType">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:group ref="TestJobGeneralElements"/>
+				<!-- One, and only one, child of the "Choice" must be appeared -->
+      			<xsd:choice id="Script-or-Factory-Mode" minOccurs="0" maxOccurs="1">
+					<xsd:group  ref="WebServiceDevModeType"/>
+					<xsd:group  ref="WebServiceSimpleModeType"/>			
+				</xsd:choice>
+    		</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+    		<xsd:attribute name="wsmode" type="xsd:string" use="required"/>
+    		<xsd:attribute name="iteration" type="xsd:string" use="required"/>
+		</xsd:complexType>
+
+		
+		
+		<xsd:group name="WebServiceDevModeType">
+			<!-- Web Service test job type in Dev Mode. -->			
+			<xsd:sequence>
+      			<xsd:element name="ClassPath" type="ClassPathType" minOccurs="0" maxOccurs="unbounded"/>
+      			<xsd:element name="TestCase" type="TestCaseType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:sequence>
+		</xsd:group>
+			
+		<xsd:group name="WebServiceSimpleModeType">	
+			<!-- Web Service test job type in Simple Mode. -->		
+			<xsd:sequence>
+      			<xsd:element name="Session" type="SessionType" minOccurs="1" maxOccurs="1"/>
+      			<!-- Assumed that the "SendPostGroup" is followed by "SendGetGroup" -->
+      			<xsd:group ref="SendGetGroup"  minOccurs="0" maxOccurs="unbounded"/>
+      			<xsd:group ref="SendPostGroup" minOccurs="0" maxOccurs="unbounded"/>
+      			</xsd:sequence>
+		</xsd:group>
+		
+		<xsd:group name="SendGetGroup">	
+		<xsd:annotation>
+      		<xsd:documentation>
+      		  	The elements group for WS "SendGet" and "Capture_response_save_param" elements,
+				It's assumed that a "SendGet" element is followed by a "Capture_response_save_param" element or not.      		
+      		</xsd:documentation>
+    	</xsd:annotation>
+			<xsd:sequence>   
+      			<xsd:element name="SendGet" type="SendType" minOccurs="1" maxOccurs="unbounded"/>
+      			<xsd:element name="Capture_response_save_param" type="Capture_response_save_param_Type" minOccurs="0" maxOccurs="1"/>
+      		</xsd:sequence>
+		</xsd:group>
+		
+		<xsd:group name="SendPostGroup">	
+			<xsd:annotation>
+      		<xsd:documentation>
+      		  The elements group for WS "SendPost" and "Capture_response_save_param" elements,
+			  It's assumed that a "SendPost" element is followed by a "Capture_response_save_param" element or not.     		
+      		</xsd:documentation>
+    	</xsd:annotation>						
+			<xsd:sequence>   
+      			<xsd:element name="SendPost" type="SendType" minOccurs="1" maxOccurs="unbounded"/>
+      			<xsd:element name="Capture_response_save_param" type="Capture_response_save_param_Type" minOccurs="0" maxOccurs="1"/>
+      		</xsd:sequence>
+		</xsd:group>
+		
+		
+		<xsd:complexType name="SessionType" >
+				
+			<xsd:sequence>
+				<xsd:element name="WSHOST">
+					<xsd:complexType>
+						<xsd:attribute name="value" type="xsd:string" use="required"/>	
+					</xsd:complexType>						 	
+				</xsd:element>	
+				<xsd:element name="WSPORT">
+					 <xsd:complexType>
+						<xsd:attribute name="value" type="PortStringType" use="required"/>	
+					</xsd:complexType>			
+				</xsd:element>
+				<xsd:element name="WSUSER">
+					 <xsd:complexType>
+						<xsd:attribute name="value" type="xsd:string" use="required"/>	
+					</xsd:complexType>			
+				</xsd:element>
+				<xsd:element name="WSPWD">
+					 <xsd:complexType>
+						<xsd:attribute name="value" type="xsd:string" use="required"/>	
+					</xsd:complexType>			
+				</xsd:element>	
+			</xsd:sequence>			
+		</xsd:complexType>
+		
+		
+
+		
+		<xsd:complexType name="SendType">						
+		<xsd:annotation>
+      		<xsd:documentation>
+      		  This SendType is the XSD complexType of Web Service "SendGet" and "SendPost" elements.     		
+      		</xsd:documentation>
+    	</xsd:annotation>			
+			<xsd:sequence>
+				<xsd:element name="URL" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="path" type="xsd:string" use="required"/>	
+					</xsd:complexType>			
+				</xsd:element>	
+				<xsd:element name="HEADERS" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="HEADER"  minOccurs="1" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:simpleContent>
+      								<xsd:extension base="xsd:string">
+      								<xsd:attribute name="name" type="xsd:string" use="required"/>
+      								</xsd:extension>
+   			 					</xsd:simpleContent>									
+							</xsd:complexType>					
+						</xsd:element>  
+				  	</xsd:sequence>
+				  	</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="PARAS" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="PARA"  minOccurs="1" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:simpleContent>
+      								<xsd:extension base="xsd:string">
+      								<xsd:attribute name="name" type="xsd:string" use="required"/>
+      								</xsd:extension>	
+   			 					</xsd:simpleContent>								
+							</xsd:complexType>			
+						</xsd:element>  
+				  	</xsd:sequence>
+				  	</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="BODY" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>	
+			<xsd:attribute name="name" type="xsd:string" use="required"/>			
+		</xsd:complexType>
+		
+		
+		<xsd:complexType name="Capture_response_save_param_Type">
+			<xsd:sequence>
+				<xsd:element name="Paraname" type="xsd:string" minOccurs="1" maxOccurs="1"/>	
+				<xsd:element name="LB" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="RB" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="OCCURENCE" type="IntegerSimpleContent" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>				
+		</xsd:complexType>
+
+		
+		<xsd:complexType name="TestCaseType">
+				<xsd:sequence>
+					<xsd:element name="Test" type="WSTestType" minOccurs="1" maxOccurs="unbounded"/>	
+				</xsd:sequence>
+			<xsd:attribute name="path" type="xsd:string" use="required"/>
+		</xsd:complexType>
+		
+		<xsd:complexType name="WSTestType">
+			<xsd:attribute name="name" type="xsd:string" use="required"/>		
+		</xsd:complexType>	
+		
+</xsd:schema>

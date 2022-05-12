@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestJob name="demo_test_suite" description="this is a suite for demo" depends="">
+    <PropFile name="$ENV" location="instanceInfo.xml"/>
+    <ConfFile name="$CONFIG" location="config.xml"/>
+    <Java name="Java_Init" description="PrepareEnv"  depends="">
+        <JobOutput name="$TESTDIR"/>
+        <JobOutput name="$LIBDIR"/>
+        <JobOutput name="$RESUTLDIR" value="RESULTS"/>
+        <Run path="framework.ACDriverFactory.javaDriver.WorkFilesLoader">
+        </Run>
+    </Java>
+    <Ant name="Ant_StartSelenium" description="selenium initialization"  depends="" driver_type="ANT" daemon="true">
+        <java fork="true" spawn="true" jar="D:\learn\Project-full\Selenium\working\selenium-server.jar">
+            <arg line="-port 4444 "/>
+            <!--<arg line="-proxyInjectionMode"/>-->
+            <arg line="-log sel.txt"/>
+            <!--<arg line="-firefoxProfileTemplate /scratch/ocssgt/mingzhu/FFprofile"/>-->
+        </java>
+    </Ant>
+    <QTP  name="QTP_ScriptMode" description="QTP脚本模式" depends="Java_Init">
+        <Lib location="common\lib_app\lib_flightdemo_login.vbs"/>
+        <Lib location="common\lib_app\lib_utility.vbs"/>
+        <Run path="testscripts\QTP\QTP_ScriptMode"></Run>
+    </QTP>
+    <QTP  name="QTP_ACMode" description="QTP Factory运行模式" factoryMode="true" depends="Java_Init" iteration="">
+        <Lib location="testscripts\QTP\ACMode\flightDemo.vbs"/>
+        <Lib location="common\lib_app\lib_utility.vbs"/>
+        <Testdata type="xsl"  location="testscripts\QTP\UILabelData\data_UI_Flight.xls"/>
+        <Testdata type="iteration"  location="testdata\testdata.xls"/>
+        <Case name="DemoFlight" description="机票系统测试" depends="">
+            <Test name="login" description="机票系统登录"></Test>
+            <Test name="bookFlight" description="机票系统订单"></Test>
+        </Case>
+    </QTP>
+    <Selenium name="selenium_demo" description="Test get email"  depends="Ant_StartSelenium">
+        <!--<TestData type="xml"  location="selenium\config.xml"/>-->
+        <ClassPath location="D:\learn\Project-full\Selenium\working\selenium-java-client-driver.jar"/>
+        <ClassPath location="selenium\test.jar"/>
+        <SelTestCase path="testCalc">
+            <SelTest name="testTestCalc"/>
+        </SelTestCase>
+    </Selenium>
+    <Selenium name="selenium_demo2" description="Test get email"  depends="">
+        <!--<TestData type="xml"  location="selenium\config.xml"/>-->
+        <ClassPath location="D:\learn\Project-full\Selenium\working\selenium-java-client-driver.jar"/>
+        <ClassPath location="selenium\test3.jar"/>
+        <SelTestCase path="toursDemoJunit">
+            <SelTest name="testToursDemoJunit"/>
+        </SelTestCase>
+    </Selenium>
+    <AC name="EndJob" description=""  depends="" >
+        <BuildReport path="./"/>
+        <UploadReport ToDo="no">
+            <FtpServer>$CONFIG.FTP_SERVER</FtpServer>
+            <FtpUser>$CONFIG.FTP_USER</FtpUser>
+            <FtpPasswd></FtpPasswd>
+            <FtpDir>$ENV.BUILD</FtpDir>
+        </UploadReport>
+        <MailReport ToDo="no">
+            <MailConfig location="MailConfig.xml"/>
+            <To>sheng.liu@live.cn</To>
+            <Subject>Send out report</Subject>
+        </MailReport>
+    </AC>
+</TestJob>

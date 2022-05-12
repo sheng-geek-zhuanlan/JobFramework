@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter" 
+		elementFormDefault="qualified">
+ 	
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		<xsd:include schemaLocation="JavaTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="JUnitTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="AntTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="QTPTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="SeleniumTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="JDBCTestJobSchema.xsd"/>
+		<xsd:include schemaLocation="WebServiceSchema.xsd"/>
+		<xsd:include schemaLocation="ACSchema.xsd"/>
+		<xsd:include schemaLocation="ScriptTestJobSchema.xsd"/>
+		<xsd:element name="TestJob">
+				<xsd:complexType>
+						<xsd:choice minOccurs="0" maxOccurs="unbounded">
+							<xsd:element name="TestJob" type="TestJobType" minOccurs="1" maxOccurs="unbounded"/>
+							<xsd:group ref="TestJobGeneralElements"/> 
+							<xsd:group ref="TestJobElementsGroup"/>					
+						</xsd:choice>	
+						<xsd:attributeGroup ref="TestJobGeneralAttributes"/>						
+				</xsd:complexType>			
+		</xsd:element>
+		
+		<xsd:complexType name="TestJobType">
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:group ref="TestJobGeneralElements"/> 
+					<xsd:group ref="TestJobElementsGroup"/>								
+				</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>
+		</xsd:complexType>
+		
+		<xsd:group name="TestJobElementsGroup">
+				<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">					
+      				<xsd:element ref="Java" minOccurs="0" maxOccurs="unbounded"/> 	
+      				<xsd:element ref="JUnit" minOccurs="0" maxOccurs="unbounded"/> 
+      				<xsd:element ref="Script" minOccurs="0" maxOccurs="unbounded"/>	
+      				<xsd:element ref="Ant" minOccurs="0" maxOccurs="unbounded"/> 
+      				<xsd:element ref="QTP" minOccurs="0" maxOccurs="unbounded"/> 
+      				<xsd:element ref="Selenium" minOccurs="0" maxOccurs="unbounded"/> 
+      				<xsd:element ref="JDBC" minOccurs="0" maxOccurs="unbounded"/>
+      				<xsd:element ref="WebService" minOccurs="0" maxOccurs="unbounded"/> 
+      				<xsd:element ref="AC" minOccurs="0" maxOccurs="unbounded"/>				
+    		</xsd:choice>
+    		</xsd:sequence>
+		</xsd:group>				
+		
+</xsd:schema>

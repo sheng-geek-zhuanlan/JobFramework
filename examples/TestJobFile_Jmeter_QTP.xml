@@ -1,0 +1,1044 @@
+<TestJob xmlns="http://www.example.com/automationcenter"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.example.com/automationcenter JobSchemas/TestJobSchema.xsd" name="nls_test_suite" description="this is a NLS automation suite" depends="">
+    <PropFile name="$ENV" location="instanceInfo.xml"/>
+    <ConfFile name="$CONFIG" location="config.xml"/>
+    <JMeter name="JMeter_JUnit_RTC_REST" description="JmeterDataSeeding"  depends="">
+        <JMX location="JMeter_home\REST_Junit.jmx"/>
+        <Threads value="5"/>
+        <Loops value="2"/>
+        <RampUp value="10"/>
+        <RampDown value="20"/>
+    </JMeter>
+    <JMeter name="JMeter_RTC_REST" description="JmeterDataSeeding"  depends="">
+        <JMX location="JMeter_home\REST.jmx"/>
+        <Threads value="5"/>
+        <Loops value="2"/>
+        <RampUp value="10"/>
+        <RampDown value="20"/>
+    </JMeter>
+    <JMeter name="JMeter_CalDav_Meeting" description="JmeterDataSeeding"  depends="">
+        <JMX location="JMeter_home\CalDav_Meeting.jmx"/>
+        <Threads value="500"/>
+        <Loops value="10"/>
+        <RampUp value="10"/>
+        <RampDown value="20"/>
+    </JMeter>
+    <JMeter name="JMeter_CalDav_Task" description="JmeterDataSeeding"  depends="">
+        <JMX location="JMeter_home\CalDav_Task.jmx"/>
+        <Threads value="500"/>
+        <Loops value="10"/>
+        <RampUp value="10"/>
+        <RampDown value="20"/>
+    </JMeter>
+    <JMeter name="JMeter_EmailSmtp" description="JmeterDataSeeding"  depends="">
+        <JMX location="JMeter_home\SMTP.jmx"/>
+        <Threads value="500"/>
+        <Loops value="10"/>
+        <RampUp value="10"/>
+        <RampDown value="20"/>
+    </JMeter>
+    <Script name="Example_Seed_user" description="Example seed data with beectl cmd"  depends="" host="10.0.0.1" timeout="14400" >
+        <PropFile name="$ENV" location="seedData/param_user.xml"/>
+        <Run path="seedData/seedDataByBeectl.pl"></Run>
+    </Script>
+    <Script name="Example_Seed_wrksp" description="Example seed data with beectl cmd"  depends="" host="10.0.0.1" timeout="14400" >
+        <PropFile name="$ENV" location="seedData/param_wrksp.xml"/>
+        <Run path="seedData/seedDataByBeectl.pl"></Run>
+    </Script>
+    <Script name="Example_Seed_resource" description="Example seed data with beectl cmd"  depends="" host="10.0.0.1" timeout="14400" >
+        <PropFile name="$ENV" location="seedData/param_res.xml"/>
+        <Run path="seedData/seedDataByBeectl.pl"></Run>
+    </Script>
+
+    <Java name="Init_Env" description="PrepareEnv"  depends="" >
+        <JobOutput name="$TESTVERSION"/>
+        <Run path="framework.ACDriverFactory.javaDriver.WorkFilesLoader">
+            <Arg line="$ENV.$BUILD"/>
+        </Run>
+    </Java>
+    <TestJob name="OBEO" depends="Init_Env">
+        <QTP name="OBEO_Install_QTP" description="deskTop client" factoryMode="true">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobOutput name="$LANGPACK_DIR"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_downloadOBIOInstallerFromHttpServer.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_openRemoteInstallerWithoutConnectionParameters.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_connectDMSWithValidCredentials.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_downloadOBIOInstallationProgramByRemoteInstaller.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_manuallyConfigureProfileWithAssociation.vbs"/>
+            <Case name="obio_downloadOBIOInstallerFromHttpServer" description="Download OBIO Installer from Example Http server" depends="">
+                <Test name="DownloadOBIOInstallerFromHttpServer" description="DownloadOBIOInstallerFromHttpServer"></Test>
+            </Case>
+            <Case name="obio_openRemoteInstallerWithoutConnectionParameters" description="Execute OBIO Remote Installer without pre-seeded server name" depends="">
+                <Test name="OpenRemoteInstallerWithoutConnectionParameters" description="OpenRemoteInstallerWithoutConnectionParameters"></Test>
+            </Case>
+            <Case name="obio_connectDMSWithValidCredentials" description="Connect DMS with valid credentials" depends="">
+                <Test name="ConnectDMSWithValidCredentials" description="ConnectDMSWithValidCredentials"></Test>
+            </Case>
+            <Case name="obio_downloadOBIOInstallationProgramByRemoteInstaller" description="obio_downloadOBIOInstallationProgramByRemoteInstaller" depends="">
+                <Test name="DownloadOBIOInstallationProgramByRemoteInstaller" description="DownloadOBIOInstallationProgramByRemoteInstaller"></Test>
+            </Case>
+        </QTP>
+        <Java name="OBEO_testLangPack_Java" description="scan xlif files"  depends="OBEO_Install_QTP">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <Property name="$CONFIGFILE" value="xlif_config.ini"/>
+            <JobInput name="$LANGPACK_DIR"/>
+            <ClassPath location="javacase\xlifScan\xlifTest.jar"/>
+            <ClassPath location="javacase\jars\dom4j-1.6.1.jar" />
+            <ClassPath location="javacase\jars\jaxen-1.1-beta-6.jar" />
+            <Run path="analysexlif.AnalyseXLIF"></Run>
+        </Java>
+        <QTP name="OBEO_Config_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Install_QTP" >
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobOutput name="$LANGPACK_DIR"/>
+            <JobOutput name="OBIO_USER1_DISPLAYNAME" />
+            <JobOutput name="OBIO_USER1_FIRSTNAME"/>
+            <JobOutput name="OBIO_USER1_LASTNAME"/>
+            <JobOutput name="OBIO_USER2_DISPLAYNAME" />
+            <JobOutput name="OBIO_USER2_FIRSTNAME"/>
+            <JobOutput name="OBIO_USER2_LASTNAME"/>
+            <JobOutput name="OBIO_USER3_DISPLAYNAME"/>
+            <JobOutput name="OBIO_USER3_FIRSTNAME"/>
+            <JobOutput name="OBIO_USER3_LASTNAME"/>
+            <JobOutput name="OBIO_USER1_EMAIL"/>
+            <JobOutput name="OBIO_USER2_EMAIL" />
+            <JobOutput name="OBIO_USER3_EMAIL" />
+            <JobOutput name="$OBIO_RESOURCE1_EMAIL"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_downloadOBIOInstallerFromHttpServer.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_openRemoteInstallerWithoutConnectionParameters.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_connectDMSWithValidCredentials.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\installation\obio_downloadOBIOInstallationProgramByRemoteInstaller.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_manuallyConfigureProfileWithAssociation.vbs"/>
+            <Case name="obio_manuallyConfigureProfileWithAssociation" description="obio_manuallyConfigureProfileWithAssociation" depends="">
+                <Test name="ManuallyConfigureProfileWithAssociation" description="ManuallyConfigureProfileWithAssociation"></Test>
+            </Case>
+        </QTP>
+        <QTP name="OBEO_Translation_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Config_QTP">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_nlsCheckDialogTranslation" description="obio_nlsCheckDialogTranslation" depends="">
+                <Test name="NLS_OBIOCheckTroubleShootingTranslation" description="NLS_OBIOCheckTroubleShootingTranslation"></Test>
+                <Test name="NLS_OBIOCheckServerruleDlgTranslation" description="NLS_OBIOCheckServerruleDlgTranslation"></Test>
+                <Test name="NLS_OBIOCheckGALDlgTranslation" description="NLS_OBIOCheckGALDlgTranslation"></Test>
+                <Test name="NLS_OBIOCheckOptionExampleDlgTranslation" description="NLS_OBIOCheckOptionExampleDlgTranslation"></Test>
+                <Test name="NLS_OBIOCheckOutOfOfficeDlgTranslation" description="NLS_OBIOCheckOutOfOfficeDlgTranslation"></Test>
+                <Test name="NLS_OBIOCheckFolderPropertyDlgTranslation" description="NLS_OBIOCheckFolderPropertyDlgTranslation"></Test>
+                <Test name="NLS_OBIOCheckWorkspaceDlgTranslation" description="NLS_OBIOCheckWorkspaceDlgTranslation"></Test>
+            </Case>
+        </QTP>
+
+        <QTP name="OBEO_Message_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Config_QTP" iteration="US-ASCII,UTF-8">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobOutput name="$MAIL_SUBJECT"/>
+            <JobOutput name="$MAIL_TO"/>
+            <JobOutput name="$MAIL_CC"/>
+            <JobOutput name="$MAIL_BODY"/>
+            <JobOutput name="$MAIL_DISPLAY"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="iteration"  location="$TESTVERSION\testscripts\common\test_data_email_full.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\email\obio_sendResendReplyAllForwardMessage.vbs"/>
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_sendResendReplyAllForwardMessage" description="obio_sendResendReplyAllForwardMessage" depends="">
+                <Test name="SendMessage" description="SendMessage"></Test>
+                <Test name="ReplyAll" description="ReplyAll"></Test>
+                <Test name="Forward" description="Forward"></Test>
+            </Case>
+        </QTP>
+        <QTP name="OBEO_PersonalWSTest_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Config_QTP" iteration="">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\email\obio_sendResendReplyAllForwardMessage.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\journal\obio_createUpdatePermanentlyDeleteJournal.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\contacts\obio_createUpdatePermanentlyDeleteExternalContact.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteRegAppWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\task\obio_createUpdatePermanentlyDeleteTask.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\notes\obio_createUpdatePermanentlyDeleteNotes.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultHoursAppWithAllFields.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultipleDaysAppWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteRegFloatingDayEventWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultipleDaysEventWithAllFields.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_openUpAB1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewABContent1stStartUp.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewGALContainers1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_navigateToABContainers1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewGALEntries1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_displayPropertiesOfGALEntries.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_addGALUserResourceToContactsFromUserProperties.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteJournal" description="obio_createUpdatePermanentlyDeleteJournal" depends="">
+                <Test name="CreateJournalWithDataInAllFields" description="CreateJournalWithDataInAllFields"></Test>
+                <Test name="ReplaceDataForAllFieldsOfJournal" description="ReplaceDataForAllFieldsOfJournal"></Test>
+                <Test name="ShiftDeleteSingleJournal" description="ShiftDeleteSingleJournal"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteExternalContact" description="obio_createUpdatePermanentlyDeleteExternalContact" depends="">
+                <Test name="CreateContactWithDataInAllFields" description="CreateContactWithDataInAllFields"></Test>
+                <Test name="UpdateContactByReplacingDataAllFields" description="UpdateContactByReplacingDataAllFields"></Test>
+                <Test name="PermanentlyDeleteContact" description="PermanentlyDeleteContact"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteRegAppWithAllFields" description="obio_createEditShiftDeleteRegAppWithAllFields" depends="">
+                <Test name="CreateRegAppWithAllFields" description="CreateRegAppWithAllFields"></Test>
+                <Test name="UpdateRegMeetByModifyingDataAllFields" description="UpdateRegMeetByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteRegAppWithAllFields" description="ShiftDeleteRegAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteTask" description="obio_createUpdatePermanentlyDeleteTask" depends="">
+                <Test name="CreateTaskWithAllFields" description="CreateTaskWithAllFields"></Test>
+                <Test name="UpdateTaskByReplacingDataAllFields" description="UpdateTaskByReplacingDataAllFields"></Test>
+                <Test name="PermDeleteTaskWithAllFields" description="PermDeleteTaskWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteNotes" description="obio_createUpdatePermanentlyDeleteNotes" depends="">
+                <Test name="CreateNoteWithColorYellow" description="CreateNoteWithColorYellow"></Test>
+                <Test name="UpdateNotebyReplacingSomeData" description="UpdateNotebyReplacingSomeData"></Test>
+                <Test name="PermanentlyDeleteSinglePersonalNote" description="PermanentlyDeleteSinglePersonalNote"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultHoursAppWithAllFields" description="obio_createEditShiftDeleteMultHoursAppWithAllFields" depends="">
+                <Test name="CreateMultiHoursAppWithAllFields" description="CreateMultiHoursAppWithAllFields"></Test>
+                <Test name="UpdateMultiHoursAppByModifyingDataAllFields" description="UpdateMultiHoursAppByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiHoursAppWithAllFields" description="ShiftDeleteMultiHoursAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultipleDaysAppWithAllFields" description="obio_createEditShiftDeleteMultipleDaysAppWithAllFields" depends="">
+                <Test name="CreateMultiDaysAppWithAllFields" description="CreateMultiDaysAppWithAllFields"></Test>
+                <Test name="UpdateMultiDaysAppByModifyingDataAllFields" description="UpdateMultiDaysAppByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiDaysAppWithAllFields" description="ShiftDeleteMultiDaysAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteRegFloatingDayEventWithAllFields" description="obio_createEditShiftDeleteRegFloatingDayEventWithAllFields" depends="">
+                <Test name="CreateRegFloatingDayEventWithAllFields" description="CreateRegFloatingDayEventWithAllFields"></Test>
+                <Test name="UpdateRegFloatingDayEventByModifyingDataAllFields" description="UpdateRegFloatingDayEventByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteRegFloatingDayEventWithAllFields" description="ShiftDeleteRegFloatingDayEventWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultipleDaysEventWithAllFields" description="obio_createEditShiftDeleteMultipleDaysEventWithAllFields" depends="">
+                <Test name="CreateMultiDaysEventWithAllFields" description="CreateMultiDaysEventWithAllFields"></Test>
+                <Test name="UpdateMultiDaysEventByModifyingDataAllFields" description="UpdateMultiDaysEventByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiDaysEventWithAllFields" description="ShiftDeleteMultiDaysEventWithAllFields"></Test>
+            </Case>
+            <Case name="obio_viewABContent1stStartUp" description="obio_viewABContent1stStartUp" depends="">
+                <Test name="ViewABContent1stStartUp" description="ViewABContent1stStartUp"></Test>
+            </Case>
+            <Case name="obio_viewGALContainers1stStartUp" description="obio_viewGALContainers1stStartUp" depends="">
+                <Test name="ViewGALContainers1stStartUp" description="OpenUpAB1stStartUp"></Test>
+            </Case>
+            <Case name="obio_navigateToABContainers1stStartUp" description="obio_navigateToABContainers1stStartUp" depends="">
+                <Test name="NavigateToABContainers1stStartUp" description="NavigateToABContainers1stStartUp"></Test>
+            </Case>
+            <!-- YOYO Comment out on 04/27/2011, in case the GAL Resource does not exist in certain instance. 
+            <Case name="obio_viewGALEntries1stStartUp" description="obio_viewGALEntries1stStartUp" depends="">
+                <Test name="ViewGALEntries1stStartUp" description="ViewGALEntries1stStartUp"></Test>
+            </Case>
+            <Case name="obio_displayPropertiesOfGALEntries" description="obio_displayPropertiesOfGALEntries" depends="">
+                <Test name="DisplayPropertiesOfInternalGALEntries" description="DisplayPropertiesOfInternalGALEntries"></Test>
+            </Case>
+            <Case name="obio_addGALUserResourceToContactsFromUserProperties" description="obio_addGALUserResourceToContactsFromUserProperties" depends="">
+                <Test name="AddGALUserResourceGroupToMainContactsFromUserProperties" description="AddGALUserResourceGroupToMainContactsFromUserProperties"></Test>
+            </Case>
+            -->
+
+        </QTP>
+        <!--<Java name="Java-protocol" description="Verify Protocol"  depends="OBEO_Other">
+            <ClassPath location="C:\QTP_Frame\javacase\jars\mail.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\protocol\CheckEmail.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\jars\activation.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\jars\commons-net-1.4.1.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\jars\jakarta-oro-2.0.8.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\jars\poi.jar"/>
+            <ClassPath location="C:\QTP_Frame\javacase\jars\base64.jar"/>
+            <JobInput name="$MAIL_SUBJECT"/>
+            <Run path="oralce.sgt.automation.email.SendReceiveMail">
+            </Run>
+        </Java>-->
+
+        <QTP name="OBEO_EmailAutoReply_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Config_QTP" iteration="">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_autoreply_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\email\obio_openRemoveAutoReply.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_openRemoveAutoReply" description="obio_openRemoveAutoReply" depends="">
+                <Test name="OpenAutoReply" description="OpenAutoReply"></Test>
+                <Test name="RemoveAutoReply" description="RemoveAutoReply"></Test>
+            </Case>
+        </QTP>
+        <QTP name="OBEO_CreateWS_QTP" description="deskTop client" factoryMode="true" depends="OBEO_Config_QTP" iteration="">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobOutput name="OBIO_PERSONAL_WORKSPACE"/>
+            <JobOutput name="OBIO_USER1_DISPLAYNAME"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_workspace_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_autoreply_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\workspace\obio_CreateEditDelWorkspace.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_CreateEditDelWorksp" description="obio_CreateEditDelWorksp" depends="">
+                <Test name="CreateWorkSpace" description="CreateWorkSpace"></Test>
+            </Case>
+        </QTP>
+        <QTP name="OBEO_TestWS_QTP" description="deskTop client" factoryMode="true" depends="OBEO_CreateWS_QTP" iteration="">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobInput name="OBIO_PERSONAL_WORKSPACE"/>
+            <JobInput name="OBIO_USER1_DISPLAYNAME"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\lib_workspace_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\email\obio_sendResendReplyAllForwardMessage.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\journal\obio_createUpdatePermanentlyDeleteJournal.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\contacts\obio_createUpdatePermanentlyDeleteExternalContact.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteRegAppWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\task\obio_createUpdatePermanentlyDeleteTask.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\notes\obio_createUpdatePermanentlyDeleteNotes.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultHoursAppWithAllFields.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultipleDaysAppWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteRegFloatingDayEventWithAllFields.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\calendar\obio_createEditShiftDeleteMultipleDaysEventWithAllFields.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_openUpAB1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewABContent1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\workspace\obio_CreateEditDelWorkspace.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewGALContainers1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_navigateToABContainers1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_viewGALEntries1stStartUp.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_displayPropertiesOfGALEntries.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\addressbook\obio_addGALUserResourceToContactsFromUserProperties.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteExternalContact" description="obio_createUpdatePermanentlyDeleteExternalContact" depends="">
+                <Test name="CreateContactWithDataInAllFields" description="CreateContactWithDataInAllFields"></Test>
+                <Test name="UpdateContactByReplacingDataAllFields" description="UpdateContactByReplacingDataAllFields"></Test>
+                <Test name="PermanentlyDeleteContact" description="PermanentlyDeleteContact"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteRegAppWithAllFields" description="obio_createEditShiftDeleteRegAppWithAllFields" depends="">
+                <Test name="CreateRegAppWithAllFields" description="CreateRegAppWithAllFields"></Test>
+                <Test name="UpdateRegMeetByModifyingDataAllFields" description="UpdateRegMeetByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteRegAppWithAllFields" description="ShiftDeleteRegAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createUpdatePermanentlyDeleteTask" description="obio_createUpdatePermanentlyDeleteTask" depends="">
+                <Test name="CreateTaskWithAllFields" description="CreateTaskWithAllFields"></Test>
+                <Test name="UpdateTaskByReplacingDataAllFields" description="UpdateTaskByReplacingDataAllFields"></Test>
+                <Test name="PermDeleteTaskWithAllFields" description="PermDeleteTaskWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultHoursAppWithAllFields" description="obio_createEditShiftDeleteMultHoursAppWithAllFields" depends="">
+                <Test name="CreateMultiHoursAppWithAllFields" description="CreateMultiHoursAppWithAllFields"></Test>
+                <Test name="UpdateMultiHoursAppByModifyingDataAllFields" description="UpdateMultiHoursAppByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiHoursAppWithAllFields" description="ShiftDeleteMultiHoursAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultipleDaysAppWithAllFields" description="obio_createEditShiftDeleteMultipleDaysAppWithAllFields" depends="">
+                <Test name="CreateMultiDaysAppWithAllFields" description="CreateMultiDaysAppWithAllFields"></Test>
+                <Test name="UpdateMultiDaysAppByModifyingDataAllFields" description="UpdateMultiDaysAppByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiDaysAppWithAllFields" description="ShiftDeleteMultiDaysAppWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteRegFloatingDayEventWithAllFields" description="obio_createEditShiftDeleteRegFloatingDayEventWithAllFields" depends="">
+                <Test name="CreateRegFloatingDayEventWithAllFields" description="CreateRegFloatingDayEventWithAllFields"></Test>
+                <Test name="UpdateRegFloatingDayEventByModifyingDataAllFields" description="UpdateRegFloatingDayEventByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteRegFloatingDayEventWithAllFields" description="ShiftDeleteRegFloatingDayEventWithAllFields"></Test>
+            </Case>
+            <Case name="obio_createEditShiftDeleteMultipleDaysEventWithAllFields" description="obio_createEditShiftDeleteMultipleDaysEventWithAllFields" depends="">
+                <Test name="CreateMultiDaysEventWithAllFields" description="CreateMultiDaysEventWithAllFields"></Test>
+                <Test name="UpdateMultiDaysEventByModifyingDataAllFields" description="UpdateMultiDaysEventByModifyingDataAllFields"></Test>
+                <Test name="ShiftDeleteMultiDaysEventWithAllFields" description="ShiftDeleteMultiDaysEventWithAllFields"></Test>
+            </Case>
+        </QTP>
+        <QTP name="OBEO_EDITDEL_WS_QTP" description="deskTop client" factoryMode="true" depends="OBEO_CreateWS_QTP" iteration="">
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <JobInput name="$TESTVERSION"/>
+            <JobInput name="OBIO_PERSONAL_WORKSPACE"/>
+            <JobInput name="OBIO_USER1_DISPLAYNAME"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obio\lib_advancedfind_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_calendar_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_contact_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_customobjects_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_folder_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_gal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_item_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_others_outlook.vbs"/>
+            <!--<Lib location="common\lib_app\obio\lib_profile_outlook.vbs"/>-->
+            <Lib location="common\lib_app\obio\lib_task_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_utilities_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_notes_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_journal_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_deployment_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_email_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="common\lib_app\obio\XlfScanMatch.vbs"/>
+            <Lib location="common\lib_app\obio\lib_dialogtranslate_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_workspace_outlook.vbs"/>
+            <Lib location="common\lib_app\obio\lib_autoreply_outlook.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\common\lib_profile_outlook.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\data_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\texttitle_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_1.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\winid_gui_label_outlook_2.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_obio.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\xlifdata_gui_label_outlook.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_connectOBIOAfterInstallFromExeFile.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\globalization\obio_nlsCheckDialogTranslation.vbs"/>
+
+            <Lib location="$TESTVERSION\testscripts\workspace\obio_CreateEditDelWorkspace.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\authentication\obio_exitOBIOAProfile.vbs"/>
+
+            <Case name="obio_connectOBIOAfterInstallFromExeFile" description="obio_connectOBIOAfterInstallFromExeFile" depends="">
+                <Test name="ConnectOBIOAfterInstallFromExeFile" description="ConnectOBIOAfterInstallFromExeFile"></Test>
+            </Case>
+            <Case name="obio_CreateEditDelWorksp" description="obio_CreateEditDelWorksp" depends="">
+                <Test name="EditWorkSpace" description="EditWorkSpace"></Test>
+                <Test name="DelWorkSpace" description="DelWorkSpace"></Test>
+            </Case>
+        </QTP>
+    </TestJob>
+    <QTP name="Beetube_QTP" description="Conference meeting client"  depends="Init_Env" factoryMode="true">
+        <PreKillProcess name="QTPPro"/>
+        <PreKillProcess name="QTAutomationAgent"/>
+        <Lib location="common\lib\lib_util.vbs"/>
+        <Lib location="common\lib_app\beetube\lib_utility_beetube.vbs"/>
+        <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_Init.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_uninstall.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_getDownloader.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_login.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_Install.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_NLSPreparion.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_exit.vbs"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\Beetube_UILabel_data.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_beetube.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_beetube.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+        <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+        <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+        <Case name="beetube_Init" description="beetube_Init" depends="">
+            <Test name="beetube_Init" description="beetube_Init"></Test>
+        </Case>
+        <Case name="beetube_uninstall" description="beetube_uninstall" depends="">
+            <Test name="beetube_UninstallMain" description="beetube_UninstallMain"></Test>
+        </Case>
+        <Case name="beetube_getDownloader" description="beetube_getDownloader" depends="">
+            <Test name="beetube_getDownloader" description="beetube_getDownloader"></Test>
+        </Case>
+        <Case name="beetube_Install" description="beetube_Install" depends="">
+            <Test name="beetube_Install" description="beetube_Install"></Test>
+        </Case>
+        <Case name="beetube_NLSPreparation" description="beetube_NLSPreparation" depends="">
+            <Test name="beetube_NLSPreparation" description="beetube_NLSPreparation"></Test>
+        </Case>
+        <Case name="beetube_login" description="beetube_login" depends="">
+            <Test name="beetube_login" description="beetube_login"></Test>
+        </Case>
+        <Case name="beetube_exit" description="beetube_exit" depends="">
+            <Test name="beetube_exit" description="beetube_exit"></Test>
+        </Case>
+    </QTP>
+    <TestJob name="OBEE" depends="Init_Env">
+        <QTP name="OBEE_QTP" description="test Example extensions for explorer" factoryMode="true" >
+            <PreKillProcess name="QTPPro"/>
+            <PreKillProcess name="QTAutomationAgent"/>
+            <Lib location="common\lib\lib_util.vbs"/>
+            <Lib location="common\lib_app\obee\lib_utility_obee.vbs"/>
+            <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\obee\obee_Init.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\obee\obee_uninstall.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\obee\obee_getDownloader.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\obee\obee_Install.vbs"/>
+            <Lib location="$TESTVERSION\testscripts\obee\obee_NLSPreparion.vbs"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\obee_UILabel_data.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_obee.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_beetube.xls"/>
+            <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+            <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+            <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+            <Case name="obee_Init" description="obee_Init" depends="">
+                <Test name="obee_Init" description="obee_Init"></Test>
+            </Case>
+            <Case name="obee_UninstallMain" description="obee_UninstallMain" depends="">
+                <Test name="obee_UninstallMain" description="obee_UninstallMain"></Test>
+            </Case>
+            <Case name="obee_getDownloader" description="obee_getDownloader" depends="">
+                <Test name="obee_getDownloader" description="obee_getDownloader"></Test>
+            </Case>
+            <Case name="obee_Install" description="obee_Install" depends="">
+                <Test name="obee_Install" description="obee_Install"></Test>
+            </Case>
+            <Case name="obee_NLSPreparation" description="obee_NLSPreparation" depends="">
+                <Test name="obee_NLSPreparation" description="obee_NLSPreparation"></Test>
+            </Case>
+        </QTP>
+        <Java name="OBEE_testLangPack_QTP" description="scan obee xlif files"  depends="OBEE_QTP">
+            <Property name="$CONFIGFILE" value="xlif_config.ini"/>
+            <JobInput name="$LANGPACK_DIR"/>
+            <ClassPath location="javacase\xlifScan\xlifTest.jar"/>
+            <ClassPath location="javacase\jars\dom4j-1.6.1.jar" />
+            <ClassPath location="javacase\jars\jaxen-1.1-beta-6.jar" />
+            <Run path="analysexlif.AnalyseXLIF"></Run>
+        </Java>
+    </TestJob>
+    <QTP name="webconf_QTP" description="Conference meeting client" factoryMode="true" depends="Init_Env">
+        <PreKillProcess name="QTPPro"/>
+        <PreKillProcess name="QTAutomationAgent"/>
+        <Lib location="common\lib\lib_util.vbs"/>
+        <Lib location="common\lib_app\webconf\common_webconf.vbs"/>
+        <Lib location="common\lib_app\obio\lib_nls.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_Init.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_Install.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_Login.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_SBLogin.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_MBLogin.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_getdownloader.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_NLSPreparion.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_uninstall.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_CreateSBMeeting.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_CreateMBMeeting.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_SBCreateMeeting.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_MBCreateMeeting.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\beetube\beetube_CreatePublicMeeting.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_login_valid.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_login_invalid.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_public_mainarea.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_public_header.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_public_footer.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_startwebconf.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_webconfid.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_normalconf.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_voiceconf.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_createin.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_conftitle.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_conftype.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_attendee.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_newconf_webconfkey.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_joinconf_confkey.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_joinconf_mailorid.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_quickstart_startbtn.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_joinconf_joinbtn.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_quickstart_morebtn.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_quickstart_title.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_quickstart_confkey.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_private_joinconf_desc.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_signout_fromhome.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_signin_MBuser.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_signin_SBuser.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_guest_emailorid.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_guest_signinbtn.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_guest_password.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_guest_emailaddress.vbs"/>
+        <Lib location="$TESTVERSION\testscripts\webconf\webconf_public_aboutpage.vbs"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\Webconf_UILabel_data.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_webconf.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\Beetube_UILabel_data.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\config_data_beetube.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_webconf.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\test_data_beetube.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\common\NLS_Knowledge.xls"/>
+        <TestData type="xls"  location="common\data\TRSIDMapping.xls"/>
+        <TestData type="xls"  location="common\data\LangNameMapping.xls"/>
+        <TestData type="xls"  location="$TESTVERSION\testscripts\webconf\test_data_zimbra.xls"/>
+
+        <Case name="webconf_signout_fromhome" description="webconf_signout_fromhome" depends="">
+            <Test name="webconf_signout_fromhome" description="webconf_signout_fromhome"></Test>
+        </Case>
+        <Case name="webconf_signin_MBuser" description="webconf_signin_MBuser" depends="">
+            <Test name="webconf_signin_MBuser" description="webconf_signin_MBuser"></Test>
+        </Case>
+        <Case name="webconf_signin_SBuser" description="webconf_signin_SBuser" depends="">
+            <Test name="webconf_signin_SBuser" description="webconf_signin_SBuser"></Test>
+        </Case>
+        <Case name="webconf_guest_emailorid" description="webconf_guest_emailorid" depends="">
+            <Test name="webconf_guest_emailorid" description="webconf_guest_emailorid"></Test>
+        </Case>
+        <Case name="webconf_guest_signinbtn" description="webconf_guest_signinbtn" depends="">
+            <Test name="webconf_guest_signinbtn" description="webconf_guest_signinbtn"></Test>
+        </Case>
+        <Case name="webconf_guest_password" description="webconf_guest_password" depends="">
+            <Test name="webconf_guest_password" description="webconf_guest_password"></Test>
+        </Case>
+        <Case name="webconf_guest_emailaddress" description="webconf_guest_emailaddress" depends="">
+            <Test name="webconf_guest_emailaddress" description="webconf_guest_emailaddress"></Test>
+        </Case>
+        <Case name="webconf_public_aboutpage" description="webconf_public_aboutpage" depends="">
+            <Test name="webconf_public_aboutpage" description="webconf_public_aboutpage"></Test>
+        </Case>
+        <Case name="webconf_private_joinconf_desc" description="webconf_private_joinconf_desc" depends="">
+            <Test name="webconf_private_joinconf_desc" description="webconf_private_joinconf_desc"></Test>
+        </Case>
+        <Case name="webconf_private_quickstart_confkey" description="webconf_private_quickstart_confkey" depends="">
+            <Test name="webconf_private_quickstart_confkey" description="webconf_private_quickstart_confkey"></Test>
+        </Case>
+        <Case name="webconf_private_quickstart_title" description="webconf_private_quickstart_title" depends="">
+            <Test name="webconf_private_quickstart_title" description="webconf_private_quickstart_title"></Test>
+        </Case>
+        <Case name="webconf_private_quickstart_morebtn" description="webconf_private_quickstart_morebtn" depends="">
+            <Test name="webconf_private_quickstart_morebtn" description="webconf_private_quickstart_morebtn"></Test>
+        </Case>
+        <Case name="webconf_private_joinconf_joinbtn" description="webconf_private_joinconf_joinbtn" depends="">
+            <Test name="webconf_private_joinconf_joinbtn" description="webconf_private_joinconf_joinbtn"></Test>
+        </Case>
+        <Case name="webconf_private_quickstart_startbtn" description="webconf_private_quickstart_startbtn" depends="">
+            <Test name="webconf_private_quickstart_startbtn" description="webconf_private_quickstart_startbtn"></Test>
+        </Case>
+        <Case name="webconf_private_joinconf_mailorid" description="webconf_private_joinconf_mailorid" depends="">
+            <Test name="webconf_private_joinconf_mailorid" description="webconf_private_joinconf_mailorid"></Test>
+        </Case>
+        <Case name="webconf_private_joinconf_confkey" description="webconf_private_joinconf_confkey" depends="">
+            <Test name="webconf_private_joinconf_confkey" description="webconf_private_joinconf_confkey"></Test>
+        </Case>
+        <Case name="webconf_newconf_webconfkey" description="webconf_newconf_webconfkey" depends="">
+            <Test name="webconf_newconf_webconfkey" description="webconf_newconf_webconfkey"></Test>
+        </Case>
+        <Case name="webconf_newconf_attendee" description="webconf_newconf_attendee" depends="">
+            <Test name="webconf_newconf_attendee" description="webconf_newconf_attendee"></Test>
+        </Case>
+        <Case name="webconf_newconf_conftype" description="webconf_newconf_conftype" depends="">
+            <Test name="webconf_newconf_conftype" description="webconf_newconf_conftype"></Test>
+        </Case>
+        <Case name="webconf_newconf_conftitle" description="webconf_newconf_conftitle" depends="">
+            <Test name="webconf_newconf_conftitle" description="webconf_newconf_conftitle"></Test>
+        </Case>
+        <Case name="webconf_newconf_createin" description="webconf_newconf_createin" depends="">
+            <Test name="webconf_newconf_createin" description="webconf_newconf_createin"></Test>
+        </Case>
+        <Case name="webconf_newconf_voiceconf" description="webconf_newconf_voiceconf" depends="">
+            <Test name="webconf_newconf_voiceconf" description="webconf_newconf_voiceconf"></Test>
+        </Case>
+        <Case name="webconf_newconf_normalconf" description="webconf_newconf_normalconf" depends="">
+            <Test name="webconf_newconf_normalconf" description="webconf_newconf_normalconf"></Test>
+        </Case>
+        <Case name="webconf_newconf_webconfid" description="webconf_newconf_webconfid" depends="">
+            <Test name="webconf_newconf_webconfid" description="webconf_newconf_webconfid"></Test>
+        </Case>
+        <Case name="webconf_newconf_startwebconf" description="webconf_newconf_startwebconf" depends="">
+            <Test name="webconf_newconf_startwebconf" description="webconf_newconf_startwebconf"></Test>
+        </Case>
+        <Case name="webconf_login_valid" description="webconf_login_valid" depends="">
+            <Test name="webconf_login_valid" description="webconf_login_valid"></Test>
+        </Case>
+        <Case name="webconf_login_invalid" description="webconf_login_invalid" depends="">
+            <Test name="webconf_login_invalid" description="webconf_login_invalid"></Test>
+        </Case>
+        <Case name="webconf_public_mainarea" description="webconf_public_mainarea" depends="">
+            <Test name="webconf_public_mainarea" description="webconf_public_mainarea"></Test>
+        </Case>
+        <Case name="webconf_public_footer" description="webconf_public_footer" depends="">
+            <Test name="webconf_public_footer" description="webconf_public_footer"></Test>
+        </Case>
+        <Case name="webconf_public_header" description="webconf_public_header" depends="">
+            <Test name="webconf_public_header" description="webconf_public_header"></Test>
+        </Case>
+    </QTP>
+    <Java name="mailAPI" description="protocol testing"  depends="Init_Env" thread="true">
+        <ClassPath location="javacase\SMTP_IMAP\checkemail.jar"/>
+        <ClassPath location="javacase\SMTP_IMAP\mail_full.jar"/>
+        <JobInput name="$MAIL_SUBJECT"/>
+        <JobInput name="$LIBDIR"/>
+        <Run path="oralce.sgt.automation.email.SendReceiveMail">
+            <Arg line="$ENVFILE.$BUILD"/>
+        </Run>
+    </Java>
+    <WebService name="SendEmail_WebService" description="Test send email by REST API"  depends="" wsmode="dev" iteration="">
+        <SelConfFile name="$CONFIG" location="WebService\test.params"/>
+        <!--<Property name="datapath" value="myconfig/config.txt"/>-->
+        <ClassPath location="WebService\jars\cis-application-8.0.0.jar"/>
+        <ClassPath location="WebService\jars\cis-client-8.0.0.3.jar"/>
+        <!--<ClassPath location="WebService\jars\maui-test.jar"/>-->
+        <ClassPath location="WebService\jars\jaxws-api.jar"/>
+        <ClassPath location="WebService\jars\management-api.jar"/>
+        <ClassPath location="WebService\jars\metro-1_2.jar"/>
+        <ClassPath location="WebService\jars\test.webservices.standalone.client.jar"/>
+        <ClassPath location="WebService\jars\policy.jar"/>
+        <ClassPath location="WebService\jars\qa.jar"/>
+        <ClassPath location="WebService\jars\qautils.jar"/>
+        <ClassPath location="WebService\jars\wlfullclient5.jar"/>
+        <ClassPath location="WebService\jars\csi_r1.jar"/>
+        <ClassPath location="WebService\jars\ocs-cspi.jar"/>
+        <ClassPath location="WebService\jars\jaxws-client.jar"/>
+        <ClassPath location="WebService\jars\jaxws-tools.jar"/>
+        <ClassPath location="WebService\jars\DevWebService.jar"/>
+        <ClassPath location="WebService\jars\commons-logging-1.1.1.jar"/>
+        <ClassPath location="WebService\jars\commons-codec-1.4.jar"/>
+        <ClassPath location="WebService\jars\commons-httpclient-3.0.1.jar"/>
+        <TestCase path="test.ocs.maui.junit.rest_apis.bhmail.MauiBhmailSendMsgTest">
+            <Test name="testSendEmsg"/>
+        </TestCase>
+        <TestCase path="test.ocs.maui.junit.rest_apis.conferencing.MauiConferencingTestBase">
+            <Test name="testCreateConference1HostMultiAttendees" />
+        </TestCase>
+    </WebService>
+    <WebService name="SeedData_WebService" description="Test seed data by REST API"  depends="" wsmode="dev" iteration="">
+        <Property name="BASE_DIR" value="webservice\seedData"/>
+        <ClassPath location="webservice\jars\ACSeedData.jar"/>
+        <ClassPath location="WebService\jars\cis-application-8.0.0.jar"/>
+        <ClassPath location="WebService\jars\cis-client-8.0.0.3.jar"/>
+        <ClassPath location="WebService\jars\jaxws-api.jar"/>
+        <ClassPath location="WebService\jars\management-api.jar"/>
+        <ClassPath location="WebService\jars\metro-1_2.jar"/>
+        <ClassPath location="WebService\jars\test.webservices.standalone.client.jar"/>
+        <ClassPath location="WebService\jars\policy.jar"/>
+        <ClassPath location="WebService\jars\qa.jar"/>
+        <ClassPath location="WebService\jars\qautils.jar"/>
+        <ClassPath location="WebService\jars\wlfullclient5.jar"/>
+        <ClassPath location="WebService\jars\csi_r1.jar"/>
+        <ClassPath location="WebService\jars\ocs-cspi.jar"/>
+        <ClassPath location="WebService\jars\jaxws-client.jar"/>
+        <ClassPath location="WebService\jars\jaxws-tools.jar"/>
+        <ClassPath location="WebService\jars\DevWebService.jar"/>
+        <ClassPath location="WebService\jars\commons-logging-1.1.1.jar"/>
+        <ClassPath location="WebService\jars\commons-codec-1.4.jar"/>
+        <ClassPath location="WebService\jars\commons-httpclient-3.0.1.jar"/>
+        <ClassPath location="WebService\jars\jxl.jar"/>
+        <ClassPath location="WebService\jars\ostermillerutils_1_07_00.jar"/>
+        <ClassPath location="WebService\jars\jaxb-impl-2.1.5.jar"/>
+        <ClassPath location="WebService\jars\authentication-framework.jar"/>
+        <ClassPath location="WebService\jars\csi_r1-impl.jar"/>
+        <TestCase path="com.test.Example.rest.acframework.Seeding">
+            <Test name="testSeedDocument"/>
+            <Test name="testSeedEmail"/>
+            <Test name="testSeedMeeting"/>
+        </TestCase>
+    </WebService>
+    <Selenium name="zimbra" description="zimbra 2.0 sanity Test" depends="Ant_StartSelenium" iteration="">
+        <SelConfFile name="$CONFIG" location="selenium/zimbra/2.0/test_xpath.xml"/>
+        <SelConfFile name="$CONFIG" location="selenium/zimbra/2.0/ZimbraTRSMapping.xml"/>
+        <SelConfFile name="$CONFIG" location="selenium/zimbra/2.0/TestEnvParam.xml"/>
+        <ClassPath location="selenium/jars/selenium-java-client-driver.jar"/>
+        <ClassPath location="selenium/jars/selenium-server.jar"/>
+        <ClassPath location="selenium/jars/ojdbc14.jar"/>
+        <ClassPath location="selenium/jars/orajtst.jar"/>
+        <ClassPath location="selenium/jars/zimbra_2.0.jar"/>
+        <SelTestCase path="test.ocs.selenium.MailTest">
+            <SelTest name="testSendEmail"/>
+        </SelTestCase>
+        <SelTestCase path="test.ocs.selenium.AddressBookTest">
+            <SelTest name="testCreateAddressBook"/>
+        </SelTestCase>
+        <SelTestCase path="test.ocs.selenium.CalenderTest">
+            <SelTest name="testCreateCalendar"/>
+        </SelTestCase>
+        <SelTestCase path="test.ocs.selenium.FolderTest">
+            <SelTest name="testNewFolder"/>
+        </SelTestCase>
+        <SelTestCase path="test.ocs.selenium.TagTest">
+            <SelTest name="testCreateTag"/>
+        </SelTestCase>
+        <SelTestCase path="test.ocs.selenium.TaskTest">
+            <SelTest name="testCreateTask"/>
+            <SelTest name="testCreateTaskList"/>
+        </SelTestCase>
+    </Selenium>
+    <Java name="XlifScan" description="scan notification xlif files"  depends="">
+        <Property name="$XLIF_PATH" value="dddd"/>
+        <JobInput name="$LANGPACK_DIR"/>
+        <ClassPath location="javacase\ameliaXlifScan\xlifScan.jar" />
+        <Run path="notif_21.xliff_parse"></Run>
+    </Java>
+    <AC name="EndJob" description=""  depends="">
+        <BuildReport path="./"/>
+        <UploadReport ToDo="Yes">
+            <FtpServer>$CONFIG.FTP_SERVER</FtpServer>
+            <FtpUser>$CONFIG.FTP_USER</FtpUser>
+            <FtpPasswd>$CONFIG.FTP_PASSWD</FtpPasswd>
+            <FtpDir>$ENV.BUILD</FtpDir>
+        </UploadReport>
+        <MailReport ToDo="Yes">
+            <MailConfig location="MailConfig.xml"/>
+            <MailTemplate location="template/MailConfig.xml"/>
+            <To>sheng.liu@live.cn</To>
+            <Subject>This is  a report generated by framework</Subject>
+        </MailReport>
+    </AC>
+</TestJob>

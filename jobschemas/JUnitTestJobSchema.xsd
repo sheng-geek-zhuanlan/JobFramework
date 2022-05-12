@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.cesoo.info/automationcenter" 
+		xmlns="http://www.cesoo.info/automationcenter"  
+		elementFormDefault="qualified">
+		 
+		<xsd:include schemaLocation="JobSchema.xsd"/>
+		
+		<xsd:element name="JUnit" type="JUnitTestJobType"/>
+		
+		<xsd:complexType name="JUnitTestJobType">
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:group ref="TestJobGeneralElements"/>
+      			<xsd:element name="ClassPath" type="ClassPathType" minOccurs="0" maxOccurs="1"/>
+      			<xsd:element name="Run" type="RunType" minOccurs="1" maxOccurs="unbounded"/>
+    		</xsd:choice>
+    		<xsd:attributeGroup ref="TestJobGeneralAttributes"/>	
+		</xsd:complexType>
+		
+</xsd:schema>

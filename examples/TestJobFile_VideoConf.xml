@@ -1,0 +1,514 @@
+<TestJob xmlns="http://www.sheng.com/automationcenter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.com/automationcenter JobSchemas/TestJobSchema.xsd" name="RealLifeSanity" description="this is a NLS automation suite" depends="" type="RTC">
+    <PropFile name="$ENV" location="instanceInfo.xml"/>
+    <ConfFile name="$CONFIG" location="config.xml"/>
+
+    <Java name="initEnv_agentReady" description="PrepareEnv" depends="">
+        <Property name="host" value="10.0.0.1,10.0.0.2,10.0.0.3"/>
+        <Property name="command" value="EXIT"/>
+        <Run path="com.test.AgentController">
+        </Run>
+    </Java>
+
+
+    <TestJob name="Open_PPT_JAVA" depends="" host="10.0.0.1">
+        <Jemmy name="test_startPPTFile_JavaFX" description="Create RTC Conferencing" depends="" host="">
+            <PreKillProcess name="powerpnt"/>
+            <!-- Here needs a 2007 version ppt file(.pptx) and the absolute path -->
+            <Property name="PPT_FILE" value="J:\Jemmy\page1.pptx"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testOpenPPTShow"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_createConf_JavaAPI" depends="initEnv_agentReady" host="">
+        <Jemmy name="test_createConf_JavaAPI" description="Create RTC Conferencing" depends="Init_RTCEnv" host="">
+            <JobOutput name="CONF_ID"/>
+            <JobOutput name="CONF_NAME"/>
+            <JobOutput name="CONF_KEY"/>
+            <Property name="CONF_NAME" value="RealLifeAuto_JavaAPI_"/>
+            <Property name="CONF_KEY" value="123456"/>
+            <ClassPath location="wcrtc\lib\weblogic.jar"/>
+            <ClassPath location="wcrtc\lib\owc-client-java.jar"/>
+            <ClassPath location="wcrtc\lib\wcrtc-client-java.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <TestCase path="com.sheng.test.conference.restapi.acframe.ConferenceRelativeJobs">
+                <Test name="createConf"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_joinConf_JavaAPI" depends="RTC_createConf_JavaAPI" host="10.0.0.3">
+        <WebService name="test_downloadJnlp_RestAPI" description="Join Conf by REST API" depends="" wsmode="dev" iteration="">
+            <JobInput name="CONF_ID"/>
+            <JobInput name="CONF_KEY"/>
+            <JobOutput name="JNLP_FILE"/>
+            <ClassPath location="wcrtc\lib\weblogic.jar"/>
+            <ClassPath location="wcrtc\lib\owc-client-java.jar"/>
+            <ClassPath location="wcrtc\lib\wcrtc-client-java.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <TestCase path="com.sheng.test.conference.restapi.acframe.ConferenceRelativeJobs">
+                <Test name="getJnlpForJoinConferenceAsViewer"/>
+            </TestCase>
+        </WebService>
+
+        <Java name="test_downLoadJars_byJNLP" description="Init RTC Env, download jar resources" depends="test_downloadJnlp_RestAPI" host="">
+            <JobInput name="JNLP_FILE"/>
+            <Property name="DOWNLOAD_JARS" value="true"/>
+            <Property name="DOWNLOAD_ALL_JARS" value="false"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <Run path="com.sheng.test.javafxconf.acJob.InitRTCEnv">
+            </Run>
+        </Java>
+
+        <Jemmy name="test_joinRTCConf_byJNLP" description="Join RTC Conferencing" depends="test_downLoadJars_byJNLP" host="">
+            <JobIutput name="JNLP_FILE"/>
+            <JobIntput name="CONF_NAME"/>
+            <JobIntput name="TIMESTAMP"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testJoinConfAsViewerbyJnlp"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testGetClientBuildVersion"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_joinConf_JavaFX" depends="RTC_createConf_JavaAPI" host="10.0.0.1">
+        <Java name="Init_RTCEnv" description="Init RTC Env, download jar resources" depends="" host="">
+            <JobInput name="JNLP"/>
+            <JobOutput name="MAIN_JAVA_FX_SCRIPT"/>
+            <JobOutput name="SERVER_INFO_URL"/>
+            <JobOutput name="LOCALE"/>
+            <JobOutput name="MODE"/>
+            <Property name="DOWNLOAD_ICONS" value="true"/>
+            <Property name="DOWNLOAD_JARS" value="true"/>
+            <Property name="DOWNLOAD_ALL_JARS" value="false"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <Run path="com.sheng.test.javafxconf.acJob.InitRTCEnv">
+            </Run>
+        </Java>
+
+        <Jemmy name="test_joinRTCConf_Jemmy" description="Join RTC Conferencing" depends="Init_RTCEnv" host="">
+            <JobIutput name="CONF_ID"/>
+            <JobIutput name="CONF_KEY"/>
+            <JobIntput name="CONF_NAME"/>
+            <JobIntput name="TIMESTAMP"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.SignInTest">
+                <Test name="testSignInAsAttendee_1"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testJoinConfbyID"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <!--mac on win7: 10.182.103.133; mac on winxp: 10.182.103.126;-->
+    <TestJob name="RTC_joinConf_iOS" depends="RTC_createConf_JavaAPI" host="10.182.103.126">
+        <Java name="test_AppDownload_iOS" description="download app from server"  depends="">
+            <ClassPath location="iOS\iphone_lib\appDown.jar"/>
+            <Run path="applicationd.appDownload"></Run>
+        </Java>
+
+        <Java name="test_AppReplace_iOS" description="replace app from local"  depends="test_AppDownload_iOS">
+            <ClassPath location="iOS\iphone_lib\appReplace.jar"/>
+            <Run path="applicationr.appReplace"></Run>
+        </Java>
+
+        <iOS name="test_joinConf_iPad" description="run iphone Conferencing automation" host="" depends="">
+            <Property name="$TEST_LANG" value="zh_CN"/>
+            <JobInput name="CONF_ID"/>
+            <JobInput name="CONF_KEY"/>
+            <!--  <ClassPath location="/Users/wanmikey/Desktop/amelia/UIAutomation/iphoneAutomation_amelia/iphone_lib/iphoneAuto.jar"/> -->
+            <!--<ClassPath location="/Volumes/ACFrame_Debug/iOS/iphone_lib/iphoneAuto.jar"/>
+                <Run path="iphonea.iphoneAuto"></Run>-->
+            <!--Instrument location="iOS\iphone_testcases\conferencing\again1.js"/-->
+            <!--Instrument location="iOS\iphone_testcases\conferencing\conf_config.js"/-->
+            <Instrument location="iOS\iphone_testcases\conferencing\demo_joinByID.js"/>
+        </iOS>
+    </TestJob>
+
+
+    <!--TestJob name="RTC_joinConf_GuestWeb" depends="" host="10.0.0.2"-->
+    <TestJob name="RTC_joinConf_GuestWeb" depends="RTC_createConf_JavaAPI" host="10.0.0.2">
+        <Java name="config_createFFProfile_Java" description="change user.js" depends="">
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\FFProfileCreate.jar"/>
+            <Run path="profilec.profileCreate"/>
+        </Java>
+
+        <Ant name="init_startSelenium_Ant" description="selenium initialization" depends="config_createFFProfile_Java" daemon="true">
+            <java fork="true" spawn="true" jar="J:\selenium\rtcGuestLoginTest\lib\selenium-server-standalone-2.20.0.jar">
+                <arg line="-port 7777"/>
+                <arg line="-firefoxProfileTemplate J:\selenium\rtcGuestLoginTest\lib\profile.firefox.default"/>
+            </java>
+        </Ant>
+
+        <Selenium name="test_downloadJNLP_GuestJoin_Selenium" description="test selenium join rtc conference by id" depends="init_startSelenium_Ant">
+            <JobInput name="CONF_ID"/>
+            <JobInput name="CONF_NAME"/>
+            <JobInput name="CONF_KEY"/>
+            <!--
+            <Property name="CONF_ID" value="7784051561"/>
+            <Property name="CONF_NAME" value="RealLifeAuto_JavaAPI_725"/>
+            <Property name="CONF_KEY" value=""/>
+            -->
+            <SelConfFile name="param_selenium_rtc_xpath" location="selenium\rtcGuestLoginTest\param\selenium_rtc_xpath.xml"/>
+            <JobOutput name="JNLP_FILE"/>
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\guestJoin.jar"/>
+            <TestCase path="rtc.rtcTest">
+                <Test name="testGuestJoin"/>
+            </TestCase>
+        </Selenium>
+
+        <Java name="init_RTCEnv_java" description="Init RTC Env, download jar resources" depends="test_downloadJNLP_GuestJoin_Selenium" host="">
+            <JobInput name="JNLP"/>
+            <JobOutput name="MAIN_JAVA_FX_SCRIPT"/>
+            <JobOutput name="SERVER_INFO_URL"/>
+            <JobOutput name="LOCALE"/>
+            <JobOutput name="MODE"/>
+            <Property name="DOWNLOAD_JARS" value="true"/>
+            <Property name="DOWNLOAD_ALL_JARS" value="false"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <Run path="com.sheng.test.javafxconf.acJob.InitRTCEnv">
+            </Run>
+        </Java>
+
+        <Jemmy name="test_joinRTCConf_JNLP_Jemmy" description="Join RTC Conferencing" depends="init_RTCEnv_java" host="">
+            <JobIutput name="JNLP_FILE"/>
+            <JobIntput name="CONF_NAME"/>
+            <!--
+            <Property name="CONF_ID" value="4518413202"/>
+            <Property name="CONF_NAME" value="334 Conf Created by RestAPI"/>
+            <Property name="CONF_KEY" value=""/>
+            -->
+            <ClassPath location="Jemmy\#HOSTNAME#"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testJoinConfAsViewerbyJnlp"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_checkJoin_JavaAPI" depends="RTC_createConf_JavaAPI,RTC_joinConf_JavaAPI,RTC_joinConf_JavaFX,RTC_joinConf_GuestWeb" host="">
+
+        <Java name="Wait_iOSJoin" description="Have a sleep before create" depends="" host="">
+            <Property name="SLEEPY_TEATIME" value="0"/>
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\teaTime.jar"/>
+            <Run path="lazy.sleepy">
+            </Run>
+        </Java>
+
+        <WebService name="test_checkJoin_JavaFX" description="" depends="Wait_iOSJoin" wsmode="dev" host="">
+            <JobIutput name="CONF_ID"/>
+            <JobIutput name="CONF_KEY"/>
+            <JobIntput name="CONF_NAME"/>
+            <Property name="EMAIL_OF_PARTICIPANTS" value="wlsuser1@us.test.com,guest.rtc@test.com,serverqa2@us.test.com"/>
+            <ClassPath location="wcrtc\lib\weblogic.jar"/>
+            <ClassPath location="wcrtc\lib\owc-client-java.jar"/>
+            <ClassPath location="wcrtc\lib\wcrtc-client-java.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <TestCase path="com.sheng.test.conference.restapi.acframe.ConferenceRelativeJobs">
+                <Test name="checkParticipants"/>
+            </TestCase>
+        </WebService>
+    </TestJob>
+
+
+    <TestJob name="RTC_viewChat_JavaFX" depends="RTC_createConf_JavaAPI,RTC_joinConf_GuestWeb" host="">
+
+        <Jemmy name="test_readMsg_JavaFX" description="" depends="" host="10.0.0.3">
+            <!--Jemmy name="test_readMsg_JavaFX" description="" depends="" host="10.0.0.2,10.0.0.3"-->
+            <JobInput name="CONF_NAME"/>
+            <Property name="LANG_CHAT" value="en"/>
+            <PropFile name="nls_RTC.Res" location="Jemmy\param\nls_test.confjava.Res.xml"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ChatTest">
+                <Test name="testCheckNewMsg"/>
+                <!--Test name="testReadNewMsg"/-->
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="test_sendMsg_JavaFX" description="" depends="" host="10.0.0.1">
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <Property name="SLEEP_TIME_SECONDS" value="60"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ChatTest">
+                <Test name="testSendMsg"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_presentConf_JavaFX" depends="RTC_createConf_JavaAPI,RTC_joinConf_GuestWeb,RTC_joinConf_JavaAPI,Open_PPT_JAVA" host="">
+        <!-- test_startPresent_Jemmy and test_waitPresent_Jemmy should be sent to the remot hosts at the same time, and it is better to send test_waitPresent_Jemmy before test_startPresent_Jemmy -->
+
+        <Java name="Wait_ChatRest" description="Have a sleep before create" depends="" host="">
+            <Property name="SLEEPY_TEATIME" value="20"/>
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\teaTime.jar"/>
+            <Run path="lazy.sleepy">
+            </Run>
+        </Java>
+
+        <Jemmy name="test_waitPresent_Jemmy" description="Create RTC Conferencing" depends="Wait_ChatRest" host="10.0.0.2">
+            <JobInput name="CONF_NAME"/>
+            <Property name="WAIT_MINUTE_FOR_PRESENTATION" value="5"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testWaitPresentation"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="test_startPresent_Jemmy" description="Create RTC Conferencing" depends="Wait_ChatRest" host="10.0.0.1">
+            <JobInput name="CONF_NAME"/>
+            <Property name="SLEEP_TIME_SECONDS" value="60"/>
+            <Property name="GOTO_NEXT_SLIDE_PPT_INTERVAL_SECONDS" value="30"/>
+            <Property name="CONF_PRESENT_CONTENT" value="ppt"/>
+            <Property name="PRESENTER_SCREEN_PIC_DIR" value="Jemmy\pic\" />
+            <Property name="SLIDE_PAGE_ID" value="001"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\jemmy-2.3.0.0.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testStartPresent"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testSlideShow"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.OtherTest">
+                <Test name="testGetPresenterScreen"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="waitPresentData_1" description="Create RTC Conferencing" depends="test_waitPresent_Jemmy" host="10.0.0.2,10.0.0.3">
+            <Property name="WAIT_TIME_SECONDS_FOR_CHECK_HOST_PIC_CREATED" value="120" />
+            <Property name="WAIT_TIME_SECONDS_FOR_TRANSFER_SCREEN_TO_ATTENDEES" value="30" />
+            <Property name="SLIDE_PAGE_ID" value="001"/>
+            <Property name="PRESENTER_SCREEN_PIC_DIR" value="Jemmy\pic\" />
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\jemmy-2.3.0.0.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.OtherTest">
+                <Test name="testCheckScreenToBeSame"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_PPT_Slide_Show_JavaFX" depends="RTC_joinConf_GuestWeb,RTC_joinConf_JavaAPI,Open_PPT_JAVA" host="">
+        <Jemmy name="test_slideShow_Jemmy" description="Create RTC Conferencing" depends="" host="10.0.0.1">
+            <Property name="PRESENTER_SCREEN_PIC_DIR" value="Jemmy\pic\" />
+            <Property name="SLIDE_PAGE_ID" value="002"/>
+            <Property name="GOTO_NEXT_SLIDE_PPT_INTERVAL_SECONDS" value="30"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\jemmy-2.3.0.0.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testGotoNextSlide"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.OtherTest">
+                <Test name="testGetPresenterScreen"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="waitPresentData_2" description="Create RTC Conferencing" depends="" host="10.0.0.2,10.0.0.3">
+            <Property name="WAIT_TIME_SECONDS_FOR_CHECK_HOST_PIC_CREATED" value="120" />
+            <Property name="WAIT_TIME_SECONDS_FOR_TRANSFER_SCREEN_TO_ATTENDEES" value="30" />
+            <Property name="SLIDE_PAGE_ID" value="002"/>
+            <Property name="PRESENTER_SCREEN_PIC_DIR" value="Jemmy\pic\" />
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\jemmy-2.3.0.0.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.OtherTest">
+                <Test name="testCheckScreenToBeSame"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_shareControl_JavaFX" depends="RTC_joinConf_GuestWeb" host="">
+        <Jemmy name="test_checkShareControlRequest_JavaFX" description="Create RTC Conferencing" depends="" host="10.0.0.1">
+            <PreKillProcess name="powerpnt"/>
+            <Property name="WAIT_MINUTE_FOR_NOTIFICATION" value="5"/>
+            <Property name="LANG_SC" value="zh_CN"/>
+            <PropFile name="nls_RTC.Res" location="Jemmy\param\test.confjava.Res.xml"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.SharedControlTest">
+                <Test name="testGetShareControlRequest"/>
+            </TestCase>
+        </Jemmy>
+        <Java name="Wait_RequestRest" description="Have a sleep before create" depends="" host="">
+            <Property name="SLEEPY_TEATIME" value="5"/>
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\teaTime.jar"/>
+            <Run path="lazy.sleepy">
+            </Run>
+        </Java>
+        <Jemmy name="test_requestControl_JavaFX" description="Create RTC Conferencing" depends="Wait_RequestRest" host="10.0.0.2">
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.SharedControlTest">
+                <Test name="testRequestControl"/>
+            </TestCase>
+        </Jemmy>
+        <!-- <Jemmy name="test_startControl_JavaFX" description="Create RTC Conferencing"  depends="test_waitShareControlRequest_JavaFX" host="10.0.0.2">
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.SharedControlTest">
+                <Test name="testStartControl"/>
+            </TestCase>
+        </Jemmy>	 -->
+    </TestJob>
+
+
+    <TestJob name="RTC_stopPresent_JavaFX" depends="RTC_joinConf_GuestWeb" host="10.0.0.1">
+        <Jemmy name="RTC_stopPresent_Jemmy" description="Create RTC Conferencing" depends="" host="">
+            <PreKillProcess name="powerpnt"/>
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testStopPresentation"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_guestPresent_JavaFX" depends="RTC_joinConf_GuestWeb" host="">
+
+        <Java name="Wait_GuestRest" description="Have a sleep before create" depends="" host="">
+            <Property name="SLEEPY_TEATIME" value="20"/>
+            <ClassPath location="selenium\rtcGuestLoginTest\jar\teaTime.jar"/>
+            <Run path="lazy.sleepy">
+            </Run>
+        </Java>
+
+        <Jemmy name="test_startPresent_Jemmy" description="Create RTC Conferencing" depends="Wait_GuestRest" host="10.0.0.2">
+            <JobInput name="CONF_NAME"/>
+            <Property name="SLEEP_TIME_SECONDS" value="60"/>
+            <Property name="CONF_PRESENT_CONTENT" value="desktop"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testStartPresent"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="RTC_stopPresent_JavaFX" description="Create RTC Conferencing" depends="test_startPresent_Jemmy" host="10.0.0.2">
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testStopPresentation"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <TestJob name="RTC_exitConf_JavaFX" depends="RTC_joinConf_JavaAPI,RTC_joinConf_JavaFX,RTC_joinConf_GuestWeb" host="">
+        <Jemmy name="test_RTCAttendeeExitConf_Jemmy" description="Create RTC Conferencing" depends="" host="10.0.0.1">
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testExitConf"/>
+            </TestCase>
+            <TestCase path="com.sheng.test.javafxconf.acJob.SignInTest">
+                <Test name="testExitApp"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="test_guestExitConf_Jemmy" description="Create RTC Conferencing" depends="" host="10.0.0.3">
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testExitAll"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="test_checkExit_JavaFX" description="" depends="test_RTCAttendeeExitConf_Jemmy,test_guestExitConf_Jemmy" host="">
+            <JobIutput name="CONF_ID"/>
+            <JobIutput name="CONF_KEY"/>
+            <JobIntput name="CONF_NAME"/>
+            <Property name="EMAIL_OF_PARTICIPANTS" value="wlsuser1@us.test.com"/>
+            <Property name="EMAIL_OF_PARTICIPANTS_UNSURE" value="guest.test.com"/>
+            <ClassPath location="wcrtc\lib\weblogic.jar"/>
+            <ClassPath location="wcrtc\lib\owc-client-java.jar"/>
+            <ClassPath location="wcrtc\lib\wcrtc-client-java.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <TestCase path="com.sheng.test.conference.restapi.acframe.ConferenceRelativeJobs">
+                <Test name="checkParticipants"/>
+            </TestCase>
+        </Jemmy>
+
+        <Jemmy name="RTC_ConfCreatorExitConf_JavaFX" description="Create RTC Conferencing" depends="" host="10.0.0.2">
+            <JobInput name="CONF_NAME"/>
+            <ClassPath location="Jemmy\jars\JavaFXConf.jar"/>
+            <ClassPath location="Jemmy\jars\JemmyFull.jar"/>
+            <ClassPath location="Jemmy\#HOSTNAME#\"/>
+            <TestCase path="com.sheng.test.javafxconf.acJob.ConfTest">
+                <Test name="testExitAll"/>
+            </TestCase>
+        </Jemmy>
+    </TestJob>
+
+
+    <AC name="EndJob" description="the last job run for build/upload/email report" depends="">
+        <BuildReport path="./"/>
+        <UploadReport ToDo="Yes">
+            <FtpServer>bej301037.cn.example.com</FtpServer>
+            <FtpUser>cdctest</FtpUser>
+            <FtpPasswd>cdctest</FtpPasswd>
+            <FtpDir>$ENV.BUILD</FtpDir>
+        </UploadReport>
+        <MailReport ToDo="Yes">
+            <MailConfig location="MailConfig.xml"/>
+            <MailTemplate location="template/MailConfig.xml"/>
+            <To>sheng.liu@live.cn</To>
+            <Subject>J daily run: Jemmy regression automation run report</Subject>
+        </MailReport>
+        <Report2DB ToDo="Yes">
+            <DB_HOST>10.0.0.2</DB_HOST>
+            <DB_PORT>1521</DB_PORT>
+            <DB_SID>jobdb</DB_SID>
+            <DB_USER>sheng</DB_USER>
+            <DB_PWD>Welcome1</DB_PWD>
+        </Report2DB>
+    </AC>
+</TestJob>
