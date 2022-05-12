@@ -1,0 +1,15 @@
+r2sMappings/r2sMap_AddressBook.xml
+r2sMappings/r2sMap_ContentManagement.xml
+r2sMappings/r2sMap_Community.xml
+r2sMappings/r2sMap_Directory.xml
+r2sMappings/r2sMap_Discussions.xml
+r2sMappings/r2sMap_Me.xml
+r2sMappings/r2sMap_IntelligentCollaboration.xml
+r2sMappings/r2sMap_Messaging.xml
+r2sMappings/r2sMap_MetadataAndRelations.xml
+r2sMappings/r2sMap_Presence.xml
+r2sMappings/r2sMap_SocialNetwork.xml
+r2sMappings/r2sMap_Subscriptions.xml
+r2sMappings/r2sMap_TaskManagement.xml
+r2sMappings/r2sMap_WorkspacesAndFolders.xml
+r2sMappings/r2sMap_Calendar.xml
